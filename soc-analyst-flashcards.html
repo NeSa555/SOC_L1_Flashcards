@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Beginner-friendly SOC analyst cybersecurity flashcards.">
+  <title>SOC Analyst Flashcards</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #151d31;
+      --panel-light: #1d2942;
+      --text: #f3f6ff;
+      --muted: #aab6d0;
+      --accent: #78a9ff;
+      --accent-2: #9ce6d2;
+      --border: #34415d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1b2b4b 0, var(--bg) 52%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 28px 16px;
+    }
+    main { width: min(760px, 100%); }
+    header { text-align: center; margin: 12px 0 28px; }
+    .eyebrow {
+      color: var(--accent-2);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .75rem;
+      font-weight: 750;
+    }
+    h1 { margin: 8px 0; font-size: clamp(2rem, 6vw, 3rem); }
+    header p, .hint { color: var(--muted); line-height: 1.6; }
+    .stats {
+      display: flex; justify-content: space-between; gap: 12px;
+      color: var(--muted); font-size: .9rem; margin-bottom: 10px;
+    }
+    .progress-track {
+      height: 7px; background: #27334b; border-radius: 99px;
+      overflow: hidden; margin-bottom: 20px;
+    }
+    .progress-bar {
+      height: 100%; width: 0; background: var(--accent-2);
+      transition: width .2s ease;
+    }
+    .card-wrap { perspective: 1000px; }
+    .flashcard {
+      width: 100%; min-height: 290px; position: relative;
+      border: 1px solid var(--border); border-radius: 24px;
+      background: var(--panel); cursor: pointer; padding: 30px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center;
+      transition: background .2s, transform .2s, border-color .2s;
+      box-shadow: 0 18px 50px #0003;
+    }
+    .flashcard:hover { background: var(--panel-light); border-color: var(--accent); }
+    .flashcard:focus-visible, button:focus-visible {
+      outline: 3px solid var(--accent-2); outline-offset: 4px;
+    }
+    .card-label {
+      font-size: .75rem; text-transform: uppercase; letter-spacing: .12em;
+      color: var(--accent); font-weight: 800; margin-bottom: 18px;
+    }
+    #cardText { font-size: clamp(1.35rem, 4vw, 2rem); line-height: 1.35; font-weight: 700; }
+    #cardHint { color: var(--muted); margin-top: 22px; font-size: .9rem; }
+    .controls {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 10px; margin-top: 16px;
+    }
+    button {
+      border: 1px solid var(--border); border-radius: 12px; padding: 12px 10px;
+      background: var(--panel-light); color: var(--text); font: inherit;
+      font-weight: 650; cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: var(--accent); color: #081329; border-color: transparent; }
+    button.known { color: var(--accent-2); }
+    button.missed { color: #ffb7b7; }
+    .bottom-row {
+      display: flex; justify-content: space-between; gap: 12px;
+      margin-top: 12px; align-items: center; flex-wrap: wrap;
+    }
+    .bottom-row button { font-size: .9rem; }
+    .review-status { color: var(--muted); font-size: .9rem; }
+    .note {
+      margin-top: 28px; padding: 16px 18px; border: 1px solid var(--border);
+      border-radius: 16px; background: #10182a; color: var(--muted);
+      font-size: .9rem; line-height: 1.6;
+    }
+    .note strong { color: var(--text); }
+    footer { text-align: center; margin-top: 20px; color: var(--muted); font-size: .8rem; }
+    @media (max-width: 520px) {
+      .flashcard { min-height: 260px; padding: 22px; }
+      .controls { grid-template-columns: repeat(2, 1fr); }
+      .controls button { min-height: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Cybersecurity learning project</div>
+      <h1>SOC Analyst Flashcards</h1>
+      <p>Learn the essential terms every beginner Security Operations Center (SOC) analyst should know.</p>
+    </header>
+
+    <section aria-label="Flashcard practice">
+      <div class="stats">
+        <span id="cardCount">Card 1 of 10</span>
+        <span id="progressText">0 of 10 learned</span>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+
+      <div class="card-wrap">
+        <button class="flashcard" id="flashcard" type="button" aria-label="Reveal flashcard answer">
+          <span class="card-label" id="cardLabel">Question</span>
+          <span id="cardText">What is a SIEM?</span>
+          <span id="cardHint">Click or press Enter to reveal the answer</span>
+        </button>
+      </div>
+
+      <div class="controls">
+        <button id="previousBtn" type="button">← Previous</button>
+        <button id="flipBtn" class="primary" type="button">Reveal answer</button>
+        <button id="nextBtn" type="button">Next →</button>
+        <button id="shuffleBtn" type="button">⤨ Shuffle</button>
+      </div>
+
+      <div class="bottom-row">
+        <div class="review-status" id="reviewStatus" aria-live="polite">Mark each card as learned or review it again.</div>
+        <div>
+          <button id="missedBtn" class="missed" type="button">× Review again</button>
+          <button id="knownBtn" class="known" type="button">✓ I know this</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="note">
+      <strong>How to use:</strong> Try to answer before revealing the back of each card.
+      Mark <strong>✓ I know this</strong> when you can explain the concept in your own words,
+      or <strong>× Review again</strong> if you need more practice. Your progress is saved in this browser.
+    </section>
+
+    <footer>Built for learning and portfolio practice. Definitions are simplified for beginners.</footer>
+  </main>
+
+  <script>
+    const cards = [
+      { question: "What is a SIEM?", answer: "Collects and correlates security logs to help detect threats." },
+      { question: "What is an IOC?", answer: "An indicator of compromise, such as a suspicious IP address or file hash." },
+      { question: "What is EDR?", answer: "Endpoint Detection and Response tools monitor devices and help investigate threats." },
+      { question: "What is phishing?", answer: "A deceptive message designed to steal information or deliver malware." },
+      { question: "What is a false positive?", answer: "A legitimate activity incorrectly flagged as suspicious." },
+      { question: "What is MFA?", answer: "Multi-factor authentication uses two or more different verification factors." },
+      { question: "What is a brute-force attack?", answer: "Repeatedly trying passwords or keys until one works." },
+      { question: "What is incident response?", answer: "The process of investigating, containing, and recovering from a security incident." },
+      { question: "What does DNS do?", answer: "Translates domain names, such as example.com, into IP addresses." },
+      { question: "What should a SOC analyst do with an alert?", answer: "Validate it, gather evidence, assess severity, document findings, and escalate when needed." }
+    ];
+
+    const STORAGE_KEY = "soc-flashcards-progress-v1";
+    let currentIndex = 0;
+    let isRevealed = false;
+    let order = cards.map((_, index) => index);
+    let progress = loadProgress();
+
+    const flashcard = document.getElementById("flashcard");
+    const cardLabel = document.getElementById("cardLabel");
+    const cardText = document.getElementById("cardText");
+    const cardHint = document.getElementById("cardHint");
+    const cardCount = document.getElementById("cardCount");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const reviewStatus = document.getElementById("reviewStatus");
+
+    function loadProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      } catch {
+        // The app still works if browser storage is unavailable.
+      }
+    }
+
+    function activeCard() {
+      return cards[order[currentIndex]];
+    }
+
+    function render() {
+      const card = activeCard();
+      const savedState = progress[order[currentIndex]];
+      cardLabel.textContent = isRevealed ? "Answer" : "Question";
+      cardText.textContent = isRevealed ? card.answer : card.question;
+      cardHint.textContent = isRevealed ? "Click to see the question again" : "Click or press Enter to reveal the answer";
+      cardCount.textContent = `Card ${currentIndex + 1} of ${cards.length}`;
+      const learnedCount = Object.values(progress).filter(value => value === "known").length;
+      progressText.textContent = `${learnedCount} of ${cards.length} learned`;
+      progressBar.style.width = `${(learnedCount / cards.length) * 100}%`;
+      reviewStatus.textContent = savedState === "known"
+        ? "✓ Marked as learned"
+        : savedState === "missed"
+          ? "× Marked to review again"
+          : "Not reviewed yet";
+      document.getElementById("previousBtn").disabled = currentIndex === 0;
+      document.getElementById("nextBtn").disabled = currentIndex === cards.length - 1;
+      document.getElementById("knownBtn").textContent = savedState === "known" ? "✓ Learned" : "✓ I know this";
+      document.getElementById("missedBtn").textContent = savedState === "missed" ? "× Review again ✓" : "× Review again";
+    }
+
+    function flipCard() {
+      isRevealed = !isRevealed;
+      render();
+    }
+
+    function goTo(index) {
+      currentIndex = Math.max(0, Math.min(index, cards.length - 1));
+      isRevealed = false;
+      render();
+    }
+
+    flashcard.addEventListener("click", flipCard);
+    document.getElementById("flipBtn").addEventListener("click", flipCard);
+    document.getElementById("previousBtn").addEventListener("click", () => goTo(currentIndex - 1));
+    document.getElementById("nextBtn").addEventListener("click", () => goTo(currentIndex + 1));
+
+    document.getElementById("shuffleBtn").addEventListener("click", () => {
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      goTo(0);
+    });
+
+    document.getElementById("knownBtn").addEventListener("click", () => {
+      progress[order[currentIndex]] = "known";
+      saveProgress();
+      if (currentIndex < cards.length - 1) goTo(currentIndex + 1);
+      else render();
+    });
+
+    document.getElementById("missedBtn").addEventListener("click", () => {
+      progress[order[currentIndex]] = "missed";
+      saveProgress();
+      if (currentIndex < cards.length - 1) goTo(currentIndex + 1);
+      else render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
